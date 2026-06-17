@@ -142,12 +142,24 @@ The HTML report MUST include ALL of the following sections rendered as interacti
 - **Color scheme**: Primary `#0052D9` (腾讯企业蓝), accent `#36CFC9`, gradient backgrounds
 - **Typography**: System font stack, proper hierarchy with `font-weight` variations
 - **Layout**: Max-width 1200px centered, responsive grid
-- **Cards**: Rounded corners (12px), subtle shadows, hover animations
+- **Cards**: Rounded corners (12px), subtle shadows, hover animations (仅桌面端)
 - **Tabs**: Pill-style tab navigation with active indicator
 - **Animations**: Smooth transitions (0.3s ease), scroll-triggered reveals
 - **Dark/Light mode**: Auto-detect system preference, toggle switch
 - **Print-friendly**: Proper `@media print` styles
-- **Mobile responsive**: Breakpoints at 768px and 480px
+- **Mobile-first responsive** (⚠️ 关键要求，必须严格遵守):
+  - 移动优先：所有 CSS 从小屏写起，768px/1024px 逐步增强
+  - Tab 导航：横向可滚动，隐藏滚动条，点击自动居中，最小触控区 44px
+  - 知识脑图：横向滚动 + 滚动提示文案（移动端显示）
+  - 知识卡片：全宽展示，触控友好导航箭头 44px
+  - 章节摘要：单列卡片，768px 起双列
+  - 概念网格：单列→双列→三列
+  - 闪卡：最小高度 240px，触控友好按钮 44px
+  - 实践清单：放大 checkbox 至 22px，行高 48px
+  - 全局防溢出：`overflow-wrap: break-word`、`max-width: 100vw`、SVG/图片 `max-width: 100%`
+  - iOS 安全区域：`env(safe-area-inset-*)` 刘海屏适配
+  - 触控设备：去掉 hover 上浮效果，消除 300ms 点击延迟
+  - 字号降级：480px 以下 h1=1.5rem，body=15px
 - **Accessibility**: Proper ARIA labels, keyboard navigation, focus styles
 
 **Output file:** `{workspace}/{book-slug}-reading-report.html`

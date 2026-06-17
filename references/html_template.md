@@ -731,26 +731,510 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 
 ---
 
-## Responsive Breakpoints
+## Responsive Design（移动端适配规范）
+
+**核心原则：移动优先，触控友好，内容不溢出。**
+
+### 1. 基础布局
 
 ```css
-@media (max-width: 768px) {
-  .container { padding: 0 16px; }
-  .tab-pills { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .concept-grid { grid-template-columns: 1fr; }
-  .review-grid { grid-template-columns: 1fr; }
+/* === 移动优先基础 === */
+* { box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
+/* === 平板 (≥768px) === */
+@media (min-width: 768px) {
+  .container { padding: 0 24px; }
+}
+
+/* === 桌面 (≥1024px) === */
+@media (min-width: 1024px) {
+  .container { padding: 0 32px; }
+}
+```
+
+### 2. Hero 区域
+
+```css
+.hero {
+  padding: 32px 0 24px;
+  text-align: center;
+}
+.hero-title { font-size: 1.6rem; line-height: 1.3; margin-bottom: 8px; }
+.hero-author { font-size: 0.9rem; }
+.hero-summary { font-size: 0.95rem; line-height: 1.6; }
+.hero-rating { flex-direction: column; gap: 8px; }
+
+@media (min-width: 768px) {
+  .hero { padding: 48px 0 32px; }
+  .hero-title { font-size: 2rem; }
+  .hero-author { font-size: 1rem; }
+  .hero-summary { font-size: 1.05rem; }
+  .hero-rating { flex-direction: row; justify-content: center; gap: 16px; }
+}
+```
+
+### 3. Tab 导航（关键！）
+
+```css
+.tab-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--gray-200);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.tab-pills {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE */
+  gap: 4px;
+  padding: 10px 0;
+  /* 隐藏滚动条但保留滚动能力 */
+}
+.tab-pills::-webkit-scrollbar { display: none; }
+
+.tab-pill {
+  flex-shrink: 0;               /* 不压缩，保持可读 */
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 20px;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 触控友好：最小触控区域 44px */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.tab-pill.active {
+  background: var(--primary-500);
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .tab-pills {
+    justify-content: center;
+    gap: 8px;
+  }
+  .tab-pill {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tab-pill { padding: 10px 24px; font-size: 0.95rem; }
+}
+```
+
+**JS: Tab 切换时自动滚动到可视区域**
+```javascript
+document.querySelectorAll('.tab-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    // 让当前 tab pill 滚动到导航栏可视区域中央
+    pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  });
+});
+```
+
+### 4. 卡片通用
+
+```css
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+/* 移动端不要 hover 上浮（触控设备无 hover） */
+@media (hover: hover) {
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,82,217,0.1);
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 768px) {
+  .card { padding: 24px; border-radius: 12px; }
+}
+```
+
+### 5. TOP3 精华论点
+
+```css
+.top3-list { display: flex; flex-direction: column; gap: 16px; }
+.top3-card {
+  padding: 20px;
+  border-left: 4px solid var(--primary-500);
+}
+.top3-header { flex-wrap: wrap; gap: 8px; }
+.top3-title { font-size: 1.05rem; }
+.top3-brief { font-size: 0.9rem; line-height: 1.5; }
+
+/* 推理链在小屏纵向排列 */
+.reasoning-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.chain-node {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+.chain-arrow { font-size: 0.9rem; }
+
+@media (min-width: 768px) {
+  .top3-list { gap: 20px; }
+  .top3-card { padding: 28px; }
+  .top3-title { font-size: 1.15rem; }
+  .reasoning-chain { flex-wrap: nowrap; }
+}
+```
+
+### 6. 知识脑图（SVG）
+
+```css
+.mindmap-container {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* 提示用户可横向滚动 */
+  position: relative;
+}
+.mindmap-svg {
+  width: 100%;
+  height: auto;
+  min-width: 600px;  /* 保证脑图内容可读 */
+  display: block;
+}
+
+/* 移动端滚动提示条 */
+.mindmap-scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 8px;
+  justify-content: center;
+}
+.mindmap-scroll-hint::before { content: '👈'; }
+.mindmap-scroll-hint::after { content: '👉'; }
+
+@media (min-width: 768px) {
+  .mindmap-container { padding: 24px; }
+  .mindmap-svg { min-width: 800px; }
+  .mindmap-scroll-hint { display: none; }
+}
+```
+
+### 7. 知识卡片（SVG 轮播）
+
+```css
+.kc-header {
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+.kc-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.kc-arrow {
+  width: 44px;    /* 触控最小 44px */
+  height: 44px;
+  border-radius: 50%;
+  font-size: 18px;
+}
+.kc-container {
+  border-radius: 12px;
+}
+.kc-svg {
+  width: 100%;
+  height: auto;
+  display: none;
+}
+.kc-svg.active { display: block; }
+
+.kc-counter {
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .kc-header { flex-direction: row; justify-content: space-between; align-items: center; }
+  .kc-arrow { width: 40px; height: 40px; }
+}
+```
+
+### 8. 章节摘要（知识卡片式）
+
+```css
+.chapter-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.chapter-card {
+  padding: 20px;
+  border-radius: 12px;
+}
+.chapter-number-badge {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+.chapter-keywords {
+  line-height: 1.8;
+}
+.chapter-keywords .hl-blue,
+.chapter-keywords .hl-red,
+.chapter-keywords .hl-green,
+.chapter-keywords .hl-purple,
+.chapter-keywords .hl-orange {
+  padding: 2px 6px;
+  font-size: 0.85rem;
+}
+.chapter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chapter-tag {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+}
+.chapter-quote {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .chapter-cards { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .chapter-card { padding: 24px; }
+}
+```
+
+### 9. 关键概念
+
+```css
+.concept-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.concept-card { padding: 16px; }
+.concept-name { font-size: 1rem; }
+.concept-definition { font-size: 0.9rem; line-height: 1.6; }
+.search-bar input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;       /* iOS 不缩放 */
+  border-radius: 10px;
+  min-height: 44px;       /* 触控友好 */
+}
+
+@media (min-width: 768px) {
+  .concept-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (min-width: 1024px) {
+  .concept-grid { grid-template-columns: repeat(3, 1fr); }
+}
+```
+
+### 10. 实践清单
+
+```css
+.checklist-category { margin-bottom: 20px; }
+.checklist-item {
+  padding: 12px 16px;
+  min-height: 48px;        /* 触控区域 */
+  align-items: flex-start;
+  gap: 12px;
+}
+.checklist-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  /* 触控放大 checkbox */
+}
+.item-text { font-size: 0.9rem; line-height: 1.5; }
+.priority-badge { font-size: 0.7rem; padding: 2px 8px; }
+.progress-bar { height: 8px; }
+
+@media (min-width: 768px) {
+  .checklist-item { padding: 14px 20px; }
+  .item-text { font-size: 0.95rem; }
+}
+```
+
+### 11. 闪卡
+
+```css
+.flashcard-container {
+  perspective: 1000px;
+  max-width: 100%;
+  padding: 0 4px;         /* 防止边缘溢出 */
+}
+.flashcard {
+  width: 100%;
+  min-height: 240px;       /* 移动端最低高度 */
+  border-radius: 16px;
+}
+.flashcard-front,
+.flashcard-back {
+  padding: 24px 20px;
+  backface-visibility: hidden;
+}
+.flashcard-question { font-size: 1.05rem; line-height: 1.5; }
+.flashcard-answer { font-size: 0.95rem; line-height: 1.6; }
+.flashcard-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.flashcard-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+}
+
+@media (min-width: 768px) {
+  .flashcard { min-height: 300px; }
+  .flashcard-front, .flashcard-back { padding: 32px; }
+  .flashcard-question { font-size: 1.15rem; }
+}
+```
+
+### 12. 评价推荐
+
+```css
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.radar-chart-container svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.book-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.audience-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.audience-tag {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .review-grid { grid-template-columns: 1fr 1fr; }
+  .book-cards { grid-template-columns: repeat(2, 1fr); }
+  .radar-chart-container svg { max-width: 400px; }
+}
+```
+
+### 13. 全局安全措施
+
+```css
+/* 防止任何内容横向溢出 */
+body, main, section, .container {
+  max-width: 100vw;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* SVG/图片不溢出 */
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 表格在小屏横向可滚动 */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* iOS 安全区域适配（刘海屏） */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .tab-nav { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  footer { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* 触控设备：去掉 hover 效果，减少 300ms 点击延迟 */
+@media (hover: none) {
+  .card:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.04); }
+  * { -webkit-tap-highlight-color: transparent; }
+}
+
+/* 字体缩放：尊重用户系统设置 */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* 小屏幕字号降级 */
 @media (max-width: 480px) {
-  .hero-title { font-size: 1.5rem; }
-  .card { padding: 16px; }
-  .top3-card { padding: 20px; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.1rem; }
+  body { font-size: 15px; }
+  .section-title h2 { font-size: 1.2rem; }
+  .section-title p { font-size: 0.85rem; }
+}
+```
+
+### 14. 深色模式移动端适配
+
+```css
+.dark .mindmap-container { background: var(--dark-bg-card); }
+.dark .mindmap-scroll-hint { color: var(--dark-gray-500); }
+.dark .tab-nav {
+  background: rgba(35,35,38,0.92);
+  border-bottom-color: #333;
 }
 ```
 
 ---
 
-## Critical Implementation Notes
+## Print Styles
 
 1. **Self-contained**: ALL CSS and JS must be embedded in the HTML file. No external dependencies.
 2. **SVG icons**: Use inline SVG for all icons (arrows, stars, theme toggle). No icon font dependencies.
