@@ -1,0 +1,19 @@
+{
+  "_instruction": "ROUTING ONLY. Never generate answers from index entries. Always read_file the target before responding.",
+  "books": [
+    {
+      "slug": "almanack-of-naval-ravikant",
+      "title": "纳瓦尔宝典",
+      "title_en": "The Almanack of Naval Ravikant",
+      "author": "Eric Jorgenson",
+      "domain": "philosophy/business",
+      "added_at": "2026-06-17",
+      "files": {
+        "summary": "library/almanack-of-naval-ravikant/summary.md",
+        "knowledge": "library/almanack-of-naval-ravikant/knowledge.json",
+        "html_report": "../../../WorkBuddy/2026-06-17-19-03-39/almanack-of-naval-ravikant-reading-report.html"
+      }
+    }
+  ],
+  "sub_skills": []
+}
