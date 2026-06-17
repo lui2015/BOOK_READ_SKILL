@@ -78,7 +78,13 @@ Extract the following six parts:
 - Read `references/flashcard_patterns.md` for card generation patterns
 - Generate cards covering: key concepts, core arguments, frameworks, vocabulary
 
-**3c. Book Review**
+**3c. Classic Stories Extraction**
+- Read `references/extraction_templates.md` (Template 8) for the story extraction format
+- Scan the book for 5-8 representative stories, anecdotes, parables, or case studies
+- For each story, extract: title, source chapter, narrative summary (100-200 words), author's viewpoint interpretation (tied to core arguments), reader insight (actionable takeaway)
+- Prioritize stories that best illustrate the book's core thesis
+
+**3d. Book Review**
 - Generate structured review: overview, strengths, weaknesses, audience fit, key takeaways
 
 #### Phase 4: HTML Report Generation (CORE OUTPUT)
@@ -114,26 +120,33 @@ The HTML report MUST include ALL of the following sections rendered as interacti
 - 左右箭头+底部圆点导航切换（支持键盘方向键）
 - 参考公式树形图风格：米黄背景、彩色关键词、箭头指向子公式
 
-**Tab 5: 章节摘要** (Chapter Summaries)
+**Tab 5: 经典故事** (Classic Stories) ★★
+- 提取书中 5-8 个最具代表性的小故事、案例或寓言
+- 每个故事含：故事标题、章节来源徽章、故事梗概（叙事性 100-200字）、折叠式"作者观点解读"（结合书中核心论点展开）、读者启示（可操作领悟）
+- 故事卡片左侧有彩色竖线标签区分不同故事类型（寓言/案例/亲身经历/历史典故）
+- 顶部提供排序切换：按"章节顺序"或"论点相关度"排列
+- 移动端：单列全宽卡片；桌面端：双列卡片布局
+
+**Tab 6: 章节摘要** (Chapter Summaries)
 - 知识卡片式展示（非手风琴）
 - 每章含颜色高亮关键词、pill 标签、渐变引用块
 - 叙事性总结 + 标签展开
 
-**Tab 6: 关键概念** (Key Concepts)
+**Tab 7: 关键概念** (Key Concepts)
 - Searchable concept index
 - Card grid layout
 - Click to expand full definition
 
-**Tab 7: 实践清单** (Action Checklist)
+**Tab 8: 实践清单** (Action Checklist)
 - Categorized actionable items with priority indicators
 - Interactive checkboxes (localStorage persistence)
 
-**Tab 8: 闪卡** (Flashcards)
+**Tab 9: 闪卡** (Flashcards)
 - Flip-card interaction
 - Progress tracking
 - Spaced repetition indicator
 
-**Tab 9: 评价推荐** (Review & Recommendations)
+**Tab 10: 评价推荐** (Review & Recommendations)
 - Radar chart for multi-dimensional ratings
 - Audience fit analysis
 - Related book recommendations
@@ -152,6 +165,7 @@ The HTML report MUST include ALL of the following sections rendered as interacti
   - Tab 导航：横向可滚动，隐藏滚动条，点击自动居中，最小触控区 44px
   - 知识脑图：横向滚动 + 滚动提示文案（移动端显示）
   - 知识卡片：全宽展示，触控友好导航箭头 44px
+  - 经典故事：单列全宽卡片，768px 起双列
   - 章节摘要：单列卡片，768px 起双列
   - 概念网格：单列→双列→三列
   - 闪卡：最小高度 240px，触控友好按钮 44px
