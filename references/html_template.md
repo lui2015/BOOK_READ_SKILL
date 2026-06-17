@@ -131,6 +131,7 @@ h4 { font-size: 1.1rem; font-weight: 500; }
         <button class="tab-pill" data-tab="arguments">核心论点</button>
 <button class="tab-pill" data-tab="framework">知识脑图</button>
         <button class="tab-pill" data-tab="knowledge-cards">🎴 知识卡片</button>
+        <button class="tab-pill" data-tab="stories">📖 经典故事</button>
         <button class="tab-pill" data-tab="chapters">章节摘要</button>
         <button class="tab-pill" data-tab="concepts">关键概念</button>
         <button class="tab-pill" data-tab="checklist">实践清单</button>
@@ -482,7 +483,328 @@ Each argument rendered as a card:
 })();
 ```
 
-### Tab 4: 章节摘要 (Chapter Summaries)
+### Tab 4: 经典故事 (Classic Stories) ★★
+
+**位置：知识卡片之后，章节摘要之前**
+
+Each story card shows: story title, source-chapter badge, story type tag (寓言/案例/亲身经历/历史典故), narrative summary, collapsible "author's viewpoint" section, and reader insight.
+
+```html
+<section id="tab-stories" class="tab-panel">
+  <!-- Sort controls -->
+  <div class="stories-controls">
+    <div class="stories-sort">
+      <span class="sort-label">排列方式：</span>
+      <button class="sort-btn active" data-sort="chapter" onclick="sortStories('chapter')">按章节顺序</button>
+      <button class="sort-btn" data-sort="relevance" onclick="sortStories('relevance')">按论点相关度</button>
+    </div>
+    <div class="stories-count">{N} 个经典故事</div>
+  </div>
+
+  <!-- Story cards grid -->
+  <div class="stories-grid" id="storiesGrid">
+    <article class="story-card" data-chapter="{N}" data-relevance="{rank}" data-type="{类型}">
+      <!-- Left accent bar (color by story type) -->
+      <div class="story-accent story-accent-{anecdote|case|personal|history}"></div>
+
+      <div class="story-body">
+        <!-- Header -->
+        <div class="story-header">
+          <div class="story-meta">
+            <span class="story-chapter-badge">第{N}章</span>
+            <span class="story-type-tag story-type-{anecdote|case|personal|history}">{寓言|案例|亲身经历|历史典故}</span>
+          </div>
+          <h3 class="story-title">{故事标题}</h3>
+        </div>
+
+        <!-- Narrative summary -->
+        <div class="story-summary">
+          <p>{故事梗概，叙事性，100-200字，用生动的语言描述故事情节}</p>
+        </div>
+
+        <!-- Collapsible: Author's viewpoint interpretation -->
+        <details class="story-interpretation">
+          <summary class="interpretation-toggle">
+            <span class="toggle-icon">💡</span>
+            <span>作者观点解读</span>
+            <span class="toggle-chevron">▾</span>
+          </summary>
+          <div class="interpretation-body">
+            <p class="interpretation-text">{结合书中核心论点，深度解读这个故事如何佐证作者的主张，引用具体论点或数据}</p>
+            <div class="linked-argument">
+              <span class="link-label">关联论点</span>
+              <span class="link-text">{关联的核心论点标题}</span>
+            </div>
+          </div>
+        </details>
+
+        <!-- Reader insight -->
+        <div class="story-insight">
+          <span class="insight-icon">✨</span>
+          <div class="insight-content">
+            <span class="insight-label">读者启示</span>
+            <p class="insight-text">{可操作的领悟，1-2句话，帮助读者将故事体悟迁移到自己的生活或工作中}</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Repeat for each story -->
+  </div>
+</section>
+```
+
+CSS for Classic Stories tab:
+
+```css
+/* ── 经典故事 Tab ────────────────────────── */
+.stories-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stories-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sort-label { font-size: 0.85rem; color: var(--gray-500); }
+.sort-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  background: var(--bg-card);
+  color: var(--gray-700);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sort-btn.active, .sort-btn:hover {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-500);
+}
+.stories-count {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+
+/* Story grid */
+.stories-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 768px) {
+  .stories-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Story card */
+.story-card {
+  display: flex;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+@media (hover: hover) {
+  .story-card:hover {
+    box-shadow: 0 4px 20px rgba(0,82,217,0.12);
+    transform: translateY(-2px);
+  }
+}
+
+/* Accent bar (left colored strip) */
+.story-accent { width: 5px; flex-shrink: 0; }
+.story-accent-anecdote  { background: linear-gradient(180deg, #9B59B6, #6C3483); }
+.story-accent-case      { background: linear-gradient(180deg, #0052D9, #36CFC9); }
+.story-accent-personal  { background: linear-gradient(180deg, #E67E22, #D35400); }
+.story-accent-history   { background: linear-gradient(180deg, #27AE60, #1A7A3F); }
+
+.story-body { flex: 1; padding: 20px; }
+
+/* Story header */
+.story-header { margin-bottom: 12px; }
+.story-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.story-chapter-badge {
+  padding: 2px 10px;
+  background: var(--primary-50);
+  color: var(--primary-600);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.story-type-tag {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.story-type-anecdote  { background: #F5EEF8; color: #7D3C98; }
+.story-type-case      { background: var(--primary-50); color: var(--primary-700); }
+.story-type-personal  { background: #FEF9E7; color: #A04000; }
+.story-type-history   { background: #EAFAF1; color: #1E8449; }
+
+.story-title { font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin: 0; line-height: 1.4; }
+
+/* Story summary */
+.story-summary {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--gray-700);
+  margin-bottom: 16px;
+}
+
+/* Collapsible interpretation */
+.story-interpretation {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.story-interpretation[open] { border-color: var(--primary-200); }
+.interpretation-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary-600);
+  background: var(--primary-50);
+  list-style: none;
+}
+.interpretation-toggle::-webkit-details-marker { display: none; }
+.toggle-chevron {
+  margin-left: auto;
+  transition: transform 0.3s;
+  font-style: normal;
+}
+.story-interpretation[open] .toggle-chevron { transform: rotate(180deg); }
+.interpretation-body {
+  padding: 14px;
+  background: var(--bg-card);
+}
+.interpretation-text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--gray-700);
+  margin-bottom: 12px;
+}
+.linked-argument {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.link-label {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background: var(--accent-50);
+  color: var(--accent-600);
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.link-text { font-size: 0.85rem; color: var(--gray-700); font-style: italic; }
+
+/* Reader insight */
+.story-insight {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #FFF9E6, #FFFBF0);
+  border: 1px solid #FFD666;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.dark .story-insight { background: rgba(255,214,102,0.08); border-color: rgba(255,214,102,0.3); }
+.insight-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.insight-content { flex: 1; }
+.insight-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #A07800;
+  margin-bottom: 3px;
+  letter-spacing: 0.03em;
+}
+.insight-text { font-size: 0.88rem; line-height: 1.6; color: var(--gray-700); margin: 0; }
+
+/* Dark mode overrides */
+.dark .story-card { background: var(--dark-bg-card); }
+.dark .sort-btn { background: var(--dark-bg-card); color: var(--dark-gray-700); border-color: #333; }
+.dark .story-interpretation { border-color: #333; }
+.dark .story-interpretation[open] { border-color: var(--primary-700); }
+.dark .interpretation-toggle { background: rgba(0,82,217,0.15); }
+.dark .interpretation-body { background: var(--dark-bg-card); }
+.dark .story-chapter-badge { background: rgba(0,82,217,0.2); }
+```
+
+JavaScript for sortStories:
+
+```javascript
+function sortStories(mode) {
+  const grid = document.getElementById('storiesGrid');
+  const cards = Array.from(grid.querySelectorAll('.story-card'));
+  cards.sort((a, b) => {
+    if (mode === 'chapter') {
+      return parseInt(a.dataset.chapter) - parseInt(b.dataset.chapter);
+    } else {
+      return parseInt(a.dataset.relevance) - parseInt(b.dataset.relevance);
+    }
+  });
+  cards.forEach(c => grid.appendChild(c));
+  document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.sort === mode));
+}
+```
+
+Mobile responsive (stories):
+
+```css
+/* 移动端适配：经典故事 */
+.stories-controls { flex-direction: column; align-items: flex-start; }
+@media (min-width: 768px) {
+  .stories-controls { flex-direction: row; align-items: center; }
+}
+.story-body { padding: 16px; }
+@media (min-width: 768px) {
+  .story-body { padding: 20px; }
+}
+/* Touch device: remove hover lift */
+@media (hover: none) {
+  .story-card:hover { transform: none; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06); }
+}
+```
+
+Data embedding format for stories:
+
+```javascript
+const BOOK_DATA = {
+  // ... other fields ...
+  classicStories: [
+    {
+      id: "story_1",
+      title: "{故事标题}",
+      chapter: {N},          // source chapter number
+      relevance: {rank},     // rank by relevance to core args (1=most relevant)
+      type: "anecdote|case|personal|history",   // story type
+      typeCN: "寓言|案例|亲身经历|历史典故",
+      summary: "{故事梗概，100-200字叙事性描述}",
+      interpretation: "{结合核心论点的深度解读，150-250字}",
+      linkedArgument: "{关联的核心论点标题}",
+      insight: "{可操作领悟，1-2句话}"
+    }
+  ]
+};
+```
+
+### Tab 6: 章节摘要 (Chapter Summaries)
 
 Accordion-style:
 
@@ -517,7 +839,7 @@ Accordion-style:
 </div>
 ```
 
-### Tab 5: 关键概念 (Key Concepts)
+### Tab 7: 关键概念 (Key Concepts)
 
 Searchable card grid:
 
@@ -539,7 +861,7 @@ Searchable card grid:
 </section>
 ```
 
-### Tab 6: 实践清单 (Action Checklist)
+### Tab 8: 实践清单 (Action Checklist)
 
 SVG radar chart + recommendations:
 
@@ -590,7 +912,7 @@ SVG radar chart + recommendations:
 </section>
 ```
 
-### Tab 7: 闪卡 (Flashcards)
+### Tab 9: 闪卡 (Flashcards)
 
 ```html
 <section id="tab-checklist">
@@ -634,7 +956,7 @@ function updateChecklistProgress() {
 }
 ```
 
-### Tab 8: 评价推荐 (Review & Recommendations)
+### Tab 10: 评价推荐 (Review & Recommendations)
 
 ```html
 <section id="tab-flashcards">
