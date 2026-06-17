@@ -220,6 +220,88 @@ const BOOK_DATA = {
   concepts: [...],
   review: { ratings, audience, weaknesses, recommendations },
   checklist: [...],
-  flashcards: [...]
+  flashcards: [...],
+  classicStories: [...]   // NEW — see Template 8
 };
+```
+
+---
+
+## Template 8: Classic Stories Extraction (经典故事)
+
+Extract 5-8 representative stories, anecdotes, parables, or case studies from the book for the "经典故事" tab.
+
+### Story Selection Criteria
+
+Select stories that are ALL of the following:
+- **Concrete** — has a specific protagonist, setting, or event (not a general statement)
+- **Illustrative** — directly supports one of the book's core arguments
+- **Memorable** — vivid enough to stick in the reader's mind
+- **Self-contained** — can be understood without reading the entire book
+
+Prioritize: stories the author explicitly uses to make a point > case studies with data > personal anecdotes > historical examples.
+
+### Story Types
+
+| Type ID | Chinese Label | Description |
+|---------|--------------|-------------|
+| `anecdote` | 寓言 | Fable, parable, or illustrative metaphor |
+| `case` | 案例 | Real-world business / scientific / social case study |
+| `personal` | 亲身经历 | Author's or protagonist's personal experience |
+| `history` | 历史典故 | Historical event or famous historical figure's story |
+
+### Extraction Format
+
+For each story, produce:
+
+```markdown
+### 故事{N}：{故事标题}
+
+**来源章节**：第{N}章
+**故事类型**：{寓言|案例|亲身经历|历史典故}
+**论点相关度排名**：{1-8，1=最强佐证}
+**关联核心论点**：{论点标题}
+
+**故事梗概**（100-200字）：
+{叙事性段落，用生动语言描述故事的起因、经过和结果。
+包含关键细节：人物、时间、地点、具体事件。
+不要用列表，要写成连贯叙事。}
+
+**作者观点解读**（150-250字）：
+{分析这个故事如何佐证作者的核心论点。
+必须引用书中的具体主张或数据。
+解释故事与论点之间的因果逻辑链。
+指出作者通过这个故事要读者得出的结论。}
+
+**读者启示**（1-2句）：
+{将故事的智慧迁移到读者自己的生活或工作场景中。
+必须是可执行的行动，而不是抽象感悟。}
+```
+
+### Quality Requirements
+
+- **梗概**：叙事连贯，有细节，禁用"他强调了X的重要性"等空话
+- **解读**：必须引用书中论点，不能只是故事复述
+- **启示**：具体可行，避免"要保持积极心态"等套话
+- **数量**：至少5个，最多8个；少于5个说明提取不足，超过8个说明过度提取
+
+### JSON Format for HTML Embedding
+
+```json
+{
+  "classicStories": [
+    {
+      "id": "story_1",
+      "title": "{故事标题}",
+      "chapter": 3,
+      "relevance": 1,
+      "type": "case",
+      "typeCN": "案例",
+      "summary": "{故事梗概，100-200字}",
+      "interpretation": "{作者观点解读，150-250字}",
+      "linkedArgument": "{关联核心论点标题}",
+      "insight": "{读者启示，1-2句话}"
+    }
+  ]
+}
 ```
